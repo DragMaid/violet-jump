@@ -1,48 +1,44 @@
 #include "spriteObject.hpp"
 
+gameObject::gameObject(int x, int y, int w, int h)
+{
+	pos_x = x;
+	pos_y = y;
+	size_w = w;
+	size_h = h;
+}
+
 void gameObject::render(SDL_Renderer* renderer)
 {
 	SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 	SDL_RenderFillRect(renderer, &rectangle);
 }
 
-staticObject::staticObject(int x, int y, int w, int h, int gamespeed)
+void gameObject::update()
 {
-	this->gamespeed = gamespeed;
-
-	pos_x = x;
-	pos_y = y;
-	width = w;
-	height= h;
-}
-
-void staticObject::update()
-{
-	pos_x += gamespeed;
-
 	rectangle.x = pos_x;
-	rectangle.y = pos_y; 
-	rectangle.w = width;
-	rectangle.h = height;
+	rectangle.y = pos_y;
+	rectangle.w = size_w;
+	rectangle.h = size_h;
 }
 
-dynamicObject::dynamicObject(int x, int y, int w, int h)
+void gameObject::reposition(int x, int y)
 {
 	pos_x = x;
 	pos_y = y;
-	width = w;
-	height= h;
 }
 
-void dynamicObject::update()
+void gameObject::move(int direction, int velocity)
 {
-	pos_x--;
-	rectangle.x = pos_x;
-	rectangle.y = pos_y; 
-	rectangle.w = width;
-	rectangle.h = height;
+	switch (direction) {
+		// Index (1, 2, 3, 4) is equivilent to (up, down, right, left)
+		case 1:
+			pos_y -= velocity;
+		case 2:
+			pos_y += velocity;
+		case 3:
+			pos_x += velocity;
+		case 4:
+			pos_x -= velocity;
+	}
 }
-
-void dynamicObject::jump(int force)
-{
-

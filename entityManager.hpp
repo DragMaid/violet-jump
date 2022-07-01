@@ -1,9 +1,11 @@
 #include "game.hpp"
 #include "spriteObject.hpp"
-#include <vector>
 
-#define gamespeed 5
+#define gamespeed 0
 #define maxdistance 200
+#define leafposy 500
+#define playerposx 50
+#define gravityForce 10
 
 class entityManager
 {
@@ -15,8 +17,14 @@ public:
 	void randomspawn();
 	void updateEntity();
 	void renderEntity();
+	void collisionDetect();
+	void physicCalculate();
+	void playerJump();
 private:
 	SDL_Renderer* renderer;
-	std::vector<staticObject*> leafContainer;
-	std::vector<dynamicObject*> playerContainer;
+	gameObject* player;
+	std::vector<gameObject*> leafContainer;
+	int Force = gravityForce;
+	int maxJump = 100;
+	int jumpDistance = 0;
 };

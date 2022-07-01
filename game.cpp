@@ -47,7 +47,10 @@ void Game::handleEvents()
 			isRunning = false;
 			break;
 		case SDL_KEYDOWN:
-		case SDL_KEYUP:
+			eManager->playerJump();
+			break;
+			
+		//case SDL_KEYUP:
 		//default:
 			//break;
 	}	
