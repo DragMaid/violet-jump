@@ -28,10 +28,11 @@ private:
 	int size_h;
 };
 
-class Player : gameObject {
+class Player : public gameObject {
 public:
+	Player(int x, int y, int w, int h) : gameObject(x, y, w, h) {};
 	void setJumpable(bool state) { this->isJumpable = state; };
-	bool check_isJumpable() { return this->isJumpable; };
+	bool checkJumpable() { return this->isJumpable; };
 private:
-	bool isJumpable;
+	bool isJumpable = false;
 };

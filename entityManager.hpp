@@ -2,10 +2,12 @@
 #include "spriteObject.hpp"
 
 #define gamespeed 0
-#define maxdistance 200
+#define maxdistance 500
 #define leafposy 500
 #define playerposx 50
 #define gravityForce 10
+#define glidespeed 3
+#define maxJumpHeight 200
 
 class entityManager
 {
@@ -20,11 +22,14 @@ public:
 	void collisionDetect();
 	void physicCalculate();
 	void playerJump();
+	void setSpaceState(bool state) { this->isSpaceBar = state; };
 private:
 	SDL_Renderer* renderer;
-	gameObject* player;
+	Player* player;
 	std::vector<gameObject*> leafContainer;
+
 	int Force = gravityForce;
-	int maxJump = 100;
 	int jumpDistance = 0;
+
+	bool isSpaceBar = false;
 };

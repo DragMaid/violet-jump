@@ -9,7 +9,7 @@ void entityManager::spawnEntity(int eType, int x, int y, int w, int h)
 			leafContainer.push_back(leaf);
 			break;
 		case 2:
-			player = new gameObject(x, y, w, h);
+			player = new Player(x, y, w, h);
 			break;
 	}
 }
@@ -24,10 +24,14 @@ void entityManager::randomspawn()
 void entityManager::physicCalculate()
 {
 	// Force < 0 -> Player is in jump animation
-	if (Force < 0) {
+	if (!player->checkJumpable()) {
 		// Reached max height -> return to falling state
-		if (this->jumpDistance >= this->maxJump) {
-			this->Force = gravityForce;
+		if (this->jumpDistance >= maxJumpHeight) {
+			if (this->isSpaceBar) {
+				this->Force = glidespeed;
+			} else {
+				this->Force = gravityForce;
+			}
 		} else {
 			this->jumpDistance += abs(Force);
 		}
@@ -37,7 +41,9 @@ void entityManager::physicCalculate()
 
 void entityManager::playerJump()
 {
-	this->Force = -10;
+	if (player->checkJumpable()) {
+		this->Force = -10;
+	}
 }
 
 void entityManager::collisionDetect()
@@ -57,18 +63,18 @@ void entityManager::collisionDetect()
 	float intersectY = abs(deltaY) - (p_h + l_h) / 2;
 
 	if ( intersectX < 0.0f && intersectY < 0.0f ) {
-		player->reposition(playerposx, leafposy - p_h + 1);
-		//player->setJumpable(true);
-	}
-	else {
-		physicCalculate();
-		//player->setJumpable(false);
+		player->reposition(playerposx, leafposy - p_h);
+		this->jumpDistance = 0;
+		player->setJumpable(true);
+	} else {
+		player->setJumpable(false);
 	}
 }
 
 void entityManager::updateEntity()
 {
 	// Physics calculations
+	physicCalculate();
 	collisionDetect();
 
 	// Update all game object variables

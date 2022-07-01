@@ -47,15 +47,20 @@ void Game::handleEvents()
 			isRunning = false;
 			break;
 		case SDL_KEYDOWN:
-			eManager->playerJump();
+			SDL_Keysym* keysym = &Event.key.keysym;
+			if ((keysym->sym) == SDLK_SPACE) {
+				eManager->playerJump();
+			}
 			break;
-			
-		//case SDL_KEYUP:
-		//default:
-			//break;
 	}	
-}
 
+	const Uint8* keystate = SDL_GetKeyboardState(NULL);
+	if (keystate[SDL_SCANCODE_SPACE]) {
+		eManager->setSpaceState(true);
+	} else {
+		eManager->setSpaceState(false);
+	}
+}
 
 void Game::update()
 {
