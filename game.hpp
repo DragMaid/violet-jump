@@ -1,6 +1,8 @@
 #pragma once
 #include "SDL2/SDL.h"
+#include "SDL_image.h"
 #include "iostream"
+#include <math.h>
 #include <vector>
 #include <string>
 #include <tuple>

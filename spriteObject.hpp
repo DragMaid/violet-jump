@@ -32,7 +32,10 @@ class Player : public gameObject {
 public:
 	Player(int x, int y, int w, int h) : gameObject(x, y, w, h) {};
 	void setJumpable(bool state) { this->isJumpable = state; };
+	void setisJumping(bool state) { this->isJumping = state; };
 	bool checkJumpable() { return this->isJumpable; };
+	bool checkisJumping() { return this->isJumping; };
 private:
 	bool isJumpable = false;
+	bool isJumping  = false;
 };
