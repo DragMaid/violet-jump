@@ -1,21 +1,26 @@
 #include "game.hpp"
 
 #define bgscrollspeed 5
+#define bgFlip true
+
+struct indexRectangle
+{
+	bool beFlip;
+	SDL_Rect DestRect;
+};
 
 class backgroundManager
 {
 public:
-	backgroundManager(SDL_Renderer* renderer, bool isflip, int screen_w, int screen_h);
+	backgroundManager(SDL_Renderer* renderer, int screen_w, int screen_h);
 	~backgroundManager();
 
 	void initBackground();
+	void addBackground(int x, int y, int w, int h);
 	void scrollBackground();
-	void quickRender(int index);
 	void updateBackground();
 	void renderBackground();
 private:
-	bool isflip = false;
-
 	int screen_w;
 	int screen_h;
 
@@ -25,10 +30,8 @@ private:
 	int IMG_amount;
 
 	SDL_Renderer* renderer;
-	SDL_RendererFlip flip = SDL_FLIP_NONE;
 
-	SDL_Rect DestRect;
-	std::vector<SDL_Rect> DestRectContainer;
+	std::vector<indexRectangle> DestRectContainer;
 
 	SDL_Texture* texture;
 	SDL_Surface* surface;

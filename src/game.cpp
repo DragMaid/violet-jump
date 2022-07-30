@@ -36,7 +36,7 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
 		isRunning = false;
 	}
 
-	bgManager = new backgroundManager(renderer, true, width, height);
+	bgManager = new backgroundManager(renderer, width, height);
 	bgManager->initBackground();
 
 	eManager = new entityManager(renderer, width, height);

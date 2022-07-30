@@ -4,7 +4,7 @@
 Game *game = nullptr;
 int main(int argv, char** args) {
 	game = new Game();
-	game->init("Hello", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, false);
+	game->init("Hello", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1080, 720, false);
 	Uint32 start_tick;
 	while ( game->running() ) {
 		start_tick = SDL_GetTicks64();
