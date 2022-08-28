@@ -1,5 +1,6 @@
 #include "game.hpp"
 #include "spriteObject.hpp"
+#include "fontManager.hpp"
 
 #define gamespeed 5
 #define maxdistance 1000
@@ -18,7 +19,9 @@ public:
 	{
 		this->screen_w = screen_w;
 		this->screen_h = screen_h;
-		this->renderer=renderer;
+		this->renderer = renderer;
+		this->label = new Label();
+		this->label->configureText(renderer, "0", "./PilotCommandGradient.otf", 30, new int[3]{255, 0, 0}, new int[2]{0, 0}, 0, 0);
 	};
 	~entityManager();
 	void spawnEntity(int eType, int x, int y, int w, int h);
@@ -35,9 +38,11 @@ public:
 private:
 	SDL_Renderer* renderer;
 	Player* player;
+	Label* label;
 	std::vector<gameObject*> incomingLeafs;
 	std::vector<gameObject*> leafContainer;
 
+	int playerScore = 0;
 	int Force = gravityForce;
 	int jumpDistance = 0;
 	int jumpHeight = 0; 

@@ -36,6 +36,8 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
 		isRunning = false;
 	}
 
+	// ARGUMENTS: SDL_Renderer* renderer, char* text, char* textFont, int textSize, int textColor[3], int padding[2], int x, int y
+
 	bgManager = new backgroundManager(renderer, width, height);
 	bgManager->initBackground();
 

@@ -10,7 +10,7 @@ void entityManager::spawnEntity(int eType, int x, int y, int w, int h)
 			incomingLeafs.push_back(leaf);
 			break;
 		case 2:
-			player = new Player(x, y, w, h);
+			player = new Player(renderer, (char*)"./assets/images/violet-sprite.png", x, y, w, h);
 			break;
 	}
 }
@@ -18,7 +18,7 @@ void entityManager::spawnEntity(int eType, int x, int y, int w, int h)
 void entityManager::startLevel() 
 {
 	spawnEntity(1, playerposx, leafposy, 50, 50);
-	spawnEntity(2, playerposx,  0, 50, 50);
+	spawnEntity(2, playerposx,  0, 200, 300);
 }
 
 void entityManager::randomspawn()
@@ -44,6 +44,12 @@ void entityManager::leafControl()
 
 		if (il_x + il_w < playerposx) {
 			incomingLeafs.erase(incomingLeafs.begin());
+
+			// Score counter
+			this->playerScore++;
+			std::string score = "SCORE: " + std::to_string(this->playerScore);
+			const char* textScore = score.c_str();
+			this->label->configureText(renderer, (char*)textScore, "./pricedown.otf", 30, new int[3]{0, 0, 0}, new int[2]{5, 0}, 0, 0);
 		}
 	}
 
@@ -136,6 +142,7 @@ void entityManager::updateEntity()
 	for (gameObject* leaf : leafContainer) {
 		leaf->update();
 	}
+	label->updateText();
 }
 
 void entityManager::renderEntity()
@@ -144,4 +151,5 @@ void entityManager::renderEntity()
 	for (gameObject* leaf : leafContainer) {
 		leaf->render(renderer);
 	}
+	label->renderText(renderer);
 }
