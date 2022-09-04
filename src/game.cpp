@@ -9,34 +9,45 @@ entityManager* eManager;
 backgroundManager* bgManager;
 
 SDL_Texture* texture;
-void Game::init(const char *title, int x, int y, int width, int height, bool fullscreen)
+void Game::init(const char *title, int x, int y, int Swidth, int Sheight, bool fullscreen)
 {
 	int flags = 0;
+	if (SDL_VideoInit(NULL) != 0) {
+		SDL_LogError(0, "Error initializing SDL video:  %s\n", SDL_GetError());
+	} 
 	if (fullscreen)
 	{
 		flags = SDL_WINDOW_FULLSCREEN;
+		SDL_DisplayMode DM;
+		if (SDL_GetCurrentDisplayMode(0, &DM) != 0) {
+			SDL_LogError(0, "SDL_GetCurrentDisplayMode failed: %s", SDL_GetError());
+		}
+		this->width = DM.w;
+		this->height = DM.h;
+	} else {
+		this->width = Swidth;
+		this->height = Sheight;
 	}
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
 	{
-		std::cout << "Started" << std::endl;
-		window = SDL_CreateWindow(title, x, y, width, height, fullscreen);
+		SDL_Log("Initializing window ... ");
+		// Having trouble using fullscreen mode so disabled it
+		window = SDL_CreateWindow(title, x, y, width, height, false);
 		
 		if (window)
 		{
-			std::cout << "Created window" << std::endl;
+			SDL_Log("Succesfully created window");
 		}
 		renderer = SDL_CreateRenderer(window, -1, 0);
 		if (renderer)
 		{
 			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-			std::cout << "Created renderer" << std::endl;
+			SDL_Log("Succesfully created renderer");
 		}
 		isRunning = true;
 	} else {
 		isRunning = false;
 	}
-
-	// ARGUMENTS: SDL_Renderer* renderer, char* text, char* textFont, int textSize, int textColor[3], int padding[2], int x, int y
 
 	bgManager = new backgroundManager(renderer, width, height);
 	bgManager->initBackground();
@@ -64,7 +75,6 @@ void Game::handleEvents()
 
 	const Uint8* keystate = SDL_GetKeyboardState(NULL);
 	if (keystate[SDL_SCANCODE_SPACE]) {
-		eManager->playerJump();
 		eManager->setSpaceState(true);
 	} else {
 		eManager->setSpaceState(false);

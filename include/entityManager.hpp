@@ -5,11 +5,11 @@
 #define gamespeed 5
 #define maxdistance 1000
 #define mindistance 100
-#define leafposy 500
+//#define leafposy 500
 #define playerposx 500
 #define gravityForce 6
 #define glidespeed 3
-#define maxJumpHeight 200
+#define maxJumpHeight 300
 #define minJumpHeight 100
 
 class entityManager
@@ -21,10 +21,11 @@ public:
 		this->screen_h = screen_h;
 		this->renderer = renderer;
 		this->label = new Label();
-		this->label->configureText(renderer, "0", "./PilotCommandGradient.otf", 30, new int[3]{255, 0, 0}, new int[2]{0, 0}, 0, 0);
+		this->label->configureText(renderer, (char*)"SCORE: 0", (char*)"./pricedown.otf", 30, new int[3]{0, 0, 0}, new int[2]{0, 0}, 0, 0);
+		this->leafposy = screen_h * 3 / 4;
 	};
 	~entityManager();
-	void spawnEntity(int eType, int x, int y, int w, int h);
+	void spawnEntity(int eType, bool customHB, rectangle dRect, rectangle hBox);
 	void removeEntity();
 	void randomspawn();
 	void updateEntity();
@@ -51,4 +52,5 @@ private:
 	int screen_h;
 
 	bool isSpaceBar = false;
+	int leafposy;
 };

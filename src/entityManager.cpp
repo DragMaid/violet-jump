@@ -1,24 +1,24 @@
 #include "entityManager.hpp"
 
-void entityManager::spawnEntity(int eType, int x, int y, int w, int h)
+void entityManager::spawnEntity(int eType, bool customHB, rectangle dRect, rectangle hBox)
 {
 	switch (eType) {
 		case 1:
 			gameObject* leaf;
-			leaf = new gameObject(x, y, w, h);
+			leaf = new gameObject(customHB, dRect, hBox);
 			leafContainer.push_back(leaf);
 			incomingLeafs.push_back(leaf);
 			break;
 		case 2:
-			player = new Player(renderer, (char*)"./assets/images/violet-sprite.png", x, y, w, h);
+			player = new Player(renderer, (char*)"./violet-sprite.png", customHB, dRect, hBox);
 			break;
 	}
 }
 
 void entityManager::startLevel() 
 {
-	spawnEntity(1, playerposx, leafposy, 50, 50);
-	spawnEntity(2, playerposx,  0, 200, 300);
+	spawnEntity(1, false, rectangle(playerposx, leafposy, 50, 10), rectangle(playerposx, leafposy, 50, 10));
+	spawnEntity(2, true, rectangle(playerposx, 0, 400, 530), rectangle(playerposx, 0, 100, 10));
 }
 
 void entityManager::randomspawn()
@@ -29,7 +29,7 @@ void entityManager::randomspawn()
 	auto [l_w, l_h] = leafContainer.back()->getSize();
 
 	if (screen_w - l_x - l_w > distance) {
-		spawnEntity(1, screen_w, leafposy, 50, 50);
+		spawnEntity(1, false, rectangle(screen_w, leafposy, 50, 10), rectangle(screen_w, leafposy, 50, 10));
 	}
 }
 
@@ -49,7 +49,7 @@ void entityManager::leafControl()
 			this->playerScore++;
 			std::string score = "SCORE: " + std::to_string(this->playerScore);
 			const char* textScore = score.c_str();
-			this->label->configureText(renderer, (char*)textScore, "./pricedown.otf", 30, new int[3]{0, 0, 0}, new int[2]{5, 0}, 0, 0);
+			this->label->configureText(renderer, (char*)textScore, (char*)"./pricedown.otf", 30, new int[3]{0, 0, 0}, new int[2]{5, 0}, 0, 0);
 		}
 	}
 
@@ -67,21 +67,23 @@ void entityManager::leafControl()
 void entityManager::physicCalculate()
 {
 	// Reached max height -> return to falling state
-	if (this->jumpDistance >= this->jumpHeight) {
+	if (this->jumpHeight >= 0 && this->jumpDistance >= this->jumpHeight) {
 		this->jumpDistance = 0;
 		this->jumpHeight = 0;
-		player->setisJumping(false);
+		player->setState("falling");
 	}
 
-	// Force < 0 -> Player is in jump animation
-	if (player->checkisJumping()) {
+	// Set state of player based on condition
+	if (player->getState() == 2) {
 		this->Force = -10;
 		this->jumpDistance += abs(Force);
-	} else {
+	} else if (player->getState() != 1 && player->getState() != 5) {
 		if (this->isSpaceBar) {
 			this->Force = glidespeed;
+			player->setState("gliding");
 		} else {
 			this->Force = gravityForce;
+			player->setState("falling");
 		}
 	}
 
@@ -91,42 +93,69 @@ void entityManager::physicCalculate()
 
 void entityManager::playerJump()
 {
-	if (player->checkJumpable() || player->checkisJumping()) {
-		player->setisJumping(true);
-		this->jumpHeight += 10;
+	// if player is currently in running or landing state -> allow to jump
+	//if (player->getState() == 1 || player->getState() == 5) {
+		//player->setState("jumping");
+		//this->jumpHeight += 10;
 
-		if (this->jumpHeight > maxJumpHeight) {
-			jumpHeight = maxJumpHeight;
+		//if (this->jumpHeight > maxJumpHeight) {
+			//jumpHeight = maxJumpHeight;
+		//}
+
+		//if (this->jumpHeight < minJumpHeight) {
+			//jumpHeight = minJumpHeight;
+		//}
+	//}
+	//
+	static bool pJump = false;
+	if (player->getState() == 1 || player->getState() == 5) {
+		if (player->getState() == 3) {
+			this->jumpHeight = 0;
+			pJump = false;
 		}
-
-		if (this->jumpHeight < minJumpHeight) {
-			jumpHeight = minJumpHeight;
+		if (pJump) {
+			player->setState("jumping");
+			pJump = false;
+		}
+		if (isSpaceBar) {
+			this->jumpHeight += 10;
+			if (this->jumpHeight > maxJumpHeight) {
+				jumpHeight = maxJumpHeight;
+				pJump = true;
+			}
+		} else if (!isSpaceBar && jumpHeight > 0) {
+			if (this->jumpHeight < minJumpHeight) {
+				jumpHeight = minJumpHeight;
+				pJump = true;
+			}
 		}
 	}
 }
 
 void entityManager::collisionDetect()
 {
-	auto [p_x, p_y] = player->getPos();
-	auto [p_w, p_h] = player->getSize();
-	float p_cen_x = (p_x + p_w / 2), p_cen_y = (p_y + p_h / 2);
+	for (int i=0; i < incomingLeafs.size(); i++) {
+		auto [p_x, p_y] = player->getPos();
+		auto [p_w, p_h] = player->getSize();
+		float p_cen_x = (p_x + p_w / 2), p_cen_y = (p_y + p_h / 2);
 
-	auto [l_x, l_y] = incomingLeafs[0]->getPos(); 
-	auto [l_w, l_h] = incomingLeafs[0]->getSize();
-	float l_cen_x = (l_x + l_w / 2), l_cen_y = (l_y + l_h / 2);
+		auto [l_x, l_y] = incomingLeafs[i]->getPos(); 
+		auto [l_w, l_h] = incomingLeafs[i]->getSize();
+		float l_cen_x = (l_x + l_w / 2), l_cen_y = (l_y + l_h / 2);
 
-	float deltaX = (p_cen_x - l_cen_x);
-	float deltaY = (p_cen_y - l_cen_y);
+		float deltaX = (p_cen_x - l_cen_x);
+		float deltaY = (p_cen_y - l_cen_y);
 
-	float intersectX = abs(deltaX) - (p_w + l_w) / 2;
-	float intersectY = abs(deltaY) - (p_h + l_h) / 2;
+		float intersectX = abs(deltaX) - (p_w + l_w) / 2;
+		float intersectY = abs(deltaY) - (p_h + l_h) / 2;
 
-	if ( intersectX < 0.0f && intersectY < 0.0f && p_y + p_h / 2 < l_y) {
-		player->reposition(playerposx, leafposy - p_h);
-		this->jumpDistance = 0;
-		player->setJumpable(true);
-	} else {
-		player->setJumpable(false);
+		if ( p_y > screen_h ) { player->reposition(playerposx, 0); };
+		if ( intersectX < 0.0f && intersectY < 0.0f && player->getState() != 2 ) { 
+			player->reposition(playerposx, leafposy - 530 + 1);
+			this->jumpDistance = 0;
+			player->setState("landing");
+			break;
+		}
 	}
 }
 
@@ -136,6 +165,7 @@ void entityManager::updateEntity()
 	physicCalculate();
 	collisionDetect();
 	leafControl();
+	playerJump();
 
 	// Update all game object variables
 	player->update();

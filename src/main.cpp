@@ -1,12 +1,12 @@
 #include "game.hpp"
 #define FPS 60
-#define SWIDTH 900
-#define SHEIGHT 600
+#define SWIDTH 1200
+#define SHEIGHT 800
 
 Game *game = nullptr;
 int main(int argv, char** args) {
 	game = new Game();
-	game->init("Hello", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SWIDTH, SHEIGHT, false);
+	game->init("Violet-jump", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SWIDTH, SHEIGHT, true);
 	Uint64 start_tick;
 	while ( game->running() ) {
 		start_tick = SDL_GetTicks64();
