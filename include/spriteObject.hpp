@@ -43,6 +43,18 @@ protected:
 	int h_size_w, h_size_h;
 };
 
+class Leaf   : public gameObject {
+public:
+	Leaf(SDL_Renderer* renderer, SDL_Texture* texture, bool customHB, rectangle dRect, rectangle hBox);
+	~Leaf(){};
+
+	void update() override;
+	void render(SDL_Renderer* renderer) override;
+private:
+	SDL_Surface* surface;
+	SDL_Texture* texture;
+};
+
 class Player : public gameObject {
 public:
 	Player(SDL_Renderer* renderer, char* sprite, bool customHB, rectangle dRect, rectangle hBox);

@@ -73,6 +73,27 @@ void gameObject::move(int direction, int velocity)
 	}
 }
 
+Leaf::Leaf(SDL_Renderer* renderer, SDL_Texture* texture, bool customHB, rectangle dRect, rectangle hBox) : gameObject(customHB, dRect, hBox)
+{
+	this->texture = texture;
+}
+
+void Leaf::update()
+{
+	if (this->customHB) {
+		this->h_pos_x = pos_x + (size_w - h_size_w) / 2;
+		this->h_pos_y = pos_y + (size_h / 2) - h_size_h;
+	}
+	this->gameObject::update();
+}
+
+void Leaf::render(SDL_Renderer* renderer)
+{
+	SDL_RenderCopy(renderer, this->texture, NULL,  &this->destRect);
+	SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+	SDL_RenderFillRect(renderer, &this->hitBox);
+} 
+
 Player::Player(SDL_Renderer* renderer, char* sprite, bool customHB, rectangle dRect, rectangle hBox) : gameObject(customHB, dRect, hBox)
 {
 	for (int i=0; i < TOTAL_FRAMES; i++) {
@@ -126,7 +147,7 @@ void Player::update()
 {
 	if (this->customHB) {
 		this->h_pos_x = pos_x + (size_w - h_size_w) / 2;
-		this->h_pos_y = pos_y + size_h - h_size_h;
+		this->h_pos_y = pos_y + size_h - h_size_h - 40;
 	}
 
 	this->runAnimation();

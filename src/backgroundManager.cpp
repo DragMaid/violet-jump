@@ -1,8 +1,10 @@
 #include "../include/backgroundManager.hpp"
 
-backgroundManager::backgroundManager(SDL_Renderer* renderer, int screen_w, int screen_h)
+backgroundManager::backgroundManager(SDL_Renderer* renderer, char* sprite, int startPointY, int screen_w, int screen_h)
 {
 	this->renderer = renderer;
+	this->sprite   = sprite;
+	this->startPointY = startPointY;
 	this->screen_w = screen_w;
 	this->screen_h = screen_h;
 }
@@ -27,16 +29,18 @@ void backgroundManager::addBackground(int x, int y, int w, int h)
 void backgroundManager::initBackground()
 {
 	// Load background texture
-	this->surface = IMG_Load("./assets/images/background.jpg");
+	this->surface = IMG_Load(sprite);
 	this->texture = SDL_CreateTextureFromSurface(renderer, surface);
 	SDL_free(this->surface);
 
 	SDL_QueryTexture(texture, NULL, NULL, &IMG_w, &IMG_h);
+	this->SLIDE_w = screen_w ? IMG_w : IMG_w < screen_w;
+	this->SLIDE_h = screen_h - (startPointY * 2);
 
 	this->IMG_amount = ceil( (float)screen_w / (float)IMG_w );
 
 	for (int i=0; i < IMG_amount; i++) {
-		addBackground((i* IMG_w), 0, IMG_w, IMG_h);
+		addBackground((i* SLIDE_w), startPointY, SLIDE_w, SLIDE_h);
 	}
 }
 
@@ -55,7 +59,7 @@ void backgroundManager::scrollBackground()
 	}
 
 	if ( lastRect->x + lastRect->w <= screen_w ) {
-		addBackground((lastRect->x + lastRect->w), 0, IMG_w, IMG_h);
+		addBackground((lastRect->x + lastRect->w), startPointY, SLIDE_w, SLIDE_h);
 	}
 }
 

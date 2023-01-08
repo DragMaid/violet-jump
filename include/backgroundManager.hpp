@@ -1,6 +1,6 @@
 #include "game.hpp"
 
-#define bgscrollspeed 5
+#define bgscrollspeeddef 5
 #define bgFlip true
 
 struct indexRectangle
@@ -12,7 +12,7 @@ struct indexRectangle
 class backgroundManager
 {
 public:
-	backgroundManager(SDL_Renderer* renderer, int screen_w, int screen_h);
+	backgroundManager(SDL_Renderer* renderer, char* sprite, int startPointY, int screen_w, int screen_h);
 	~backgroundManager();
 
 	void initBackground();
@@ -20,12 +20,18 @@ public:
 	void scrollBackground();
 	void updateBackground();
 	void renderBackground();
+	void setspeed(int speed) { this->bgscrollspeed = speed; };
 private:
+	int bgscrollspeed = bgscrollspeeddef;
+	char* sprite;
+	int startPointY;
 	int screen_w;
 	int screen_h;
 
 	int IMG_w;
 	int IMG_h;
+	int SLIDE_w;
+	int SLIDE_h;
 
 	int IMG_amount;
 

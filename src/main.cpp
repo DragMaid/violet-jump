@@ -6,7 +6,7 @@
 Game *game = nullptr;
 int main(int argv, char** args) {
 	game = new Game();
-	game->init("Violet-jump", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SWIDTH, SHEIGHT, true);
+	game->init("Violet-jump", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SWIDTH, SHEIGHT, false);
 	Uint64 start_tick;
 	while ( game->running() ) {
 		start_tick = SDL_GetTicks64();

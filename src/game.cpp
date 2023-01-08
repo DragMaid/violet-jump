@@ -7,6 +7,7 @@ Game::~Game(){}
 
 entityManager* eManager;
 backgroundManager* bgManager;
+backgroundManager* lakeManager;
 
 SDL_Texture* texture;
 void Game::init(const char *title, int x, int y, int Swidth, int Sheight, bool fullscreen)
@@ -49,8 +50,11 @@ void Game::init(const char *title, int x, int y, int Swidth, int Sheight, bool f
 		isRunning = false;
 	}
 
-	bgManager = new backgroundManager(renderer, width, height);
-	bgManager->initBackground();
+	//bgManager = new backgroundManager(renderer, (char*)"./assets/images/background.jpg", 0, width, height);
+	//bgManager->initBackground();
+
+	lakeManager = new backgroundManager(renderer, (char*)"./lakeview.jpg", 100, width, height);
+	lakeManager->initBackground();
 
 	eManager = new entityManager(renderer, width, height);
 	eManager->startLevel();
@@ -83,17 +87,19 @@ void Game::handleEvents()
 
 void Game::update()
 {
-	bgManager->updateBackground();
+	//bgManager->updateBackground();
+	lakeManager->updateBackground();
 	eManager->updateEntity();
 }
 
 void Game::render()
 {
-	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 	SDL_RenderClear(renderer);
 	// All entities' rendering goes here
 	SDL_RenderCopy(renderer, texture, NULL, NULL);
-	bgManager->renderBackground();
+	//bgManager->renderBackground();
+	lakeManager->renderBackground();
 	eManager->renderEntity();
 	SDL_RenderPresent(renderer);
 }
